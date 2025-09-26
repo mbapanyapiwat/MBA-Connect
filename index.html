@@ -5,11 +5,12 @@
     <title>Login with LINE LIFF</title>
 </head>
 <body>
-    <img id="pictureUrl" alt="Profile Picture" style="width:500px;height:500px;">
+    <img id="pictureUrl" alt="Profile Picture" style="width:100px;height:100px;">
     <p id="userId"><b>userId :</b> <span id="userIdValue"></span></p>
     <p id="displayName"><b>displayName :</b> <span id="displayNameValue"></span></p>
     <p id="statusMessage"><b>statusMessage :</b> <span id="statusMessageValue"></span></p>
     <p id="decodedIDToken"><b>email :</b> <span id="emailValue"></span></p>
+    <button id="logoutBtn" style="display:none;">Logout</button>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
         async function getUserProfile() {
@@ -21,10 +22,16 @@
                 document.getElementById("statusMessageValue").textContent = profile.statusMessage || "-";
                 const decoded = liff.getDecodedIDToken();
                 document.getElementById("emailValue").textContent = decoded && decoded.email ? decoded.email : "-";
+                document.getElementById("logoutBtn").style.display = "inline-block";
             } catch (err) {
                 alert("Error getting profile: " + err.message);
             }
         }
+
+        document.getElementById("logoutBtn").onclick = function() {
+            liff.logout();
+            location.reload();
+        };
 
         async function main() {
             try {
