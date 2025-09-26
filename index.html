@@ -6,27 +6,36 @@
 </head>
 <body>
     <img id="pictureUrl" alt="Profile Picture" style="width:100px;height:100px;">
-    <p id="userId"><b>userId :</b> </p>
-    <p id="displayName"><b>displayName :</b> </p>
-    <p id="statusMessage"><b>statusMessage :</b> </p>
-    <p id="decodedIDToken"><b>email :</b> </p>
+    <p id="userId"><b>userId :</b> <span id="userIdValue"></span></p>
+    <p id="displayName"><b>displayName :</b> <span id="displayNameValue"></span></p>
+    <p id="statusMessage"><b>statusMessage :</b> <span id="statusMessageValue"></span></p>
+    <p id="decodedIDToken"><b>email :</b> <span id="emailValue"></span></p>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
         async function getUserProfile() {
-            const profile = await liff.getProfile();
-            document.getElementById("pictureUrl").src = profile.pictureUrl;
-            document.getElementById("userId").append(profile.userId);
-            document.getElementById("displayName").append(profile.displayName);
-            document.getElementById("statusMessage").append(profile.statusMessage || "-");
-            document.getElementById("decodedIDToken").append(liff.getDecodedIDToken().email || "-");
+            try {
+                const profile = await liff.getProfile();
+                document.getElementById("pictureUrl").src = profile.pictureUrl || "";
+                document.getElementById("userIdValue").textContent = profile.userId || "-";
+                document.getElementById("displayNameValue").textContent = profile.displayName || "-";
+                document.getElementById("statusMessageValue").textContent = profile.statusMessage || "-";
+                const decoded = liff.getDecodedIDToken();
+                document.getElementById("emailValue").textContent = decoded && decoded.email ? decoded.email : "-";
+            } catch (err) {
+                alert("Error getting profile: " + err.message);
+            }
         }
 
         async function main() {
-            await liff.init({ liffId: "1653575653-e9vXldMN", withLoginOnExternalBrowser: true });
-            if (liff.isLoggedIn()) {
-                getUserProfile();
-            } else {
-                liff.login();
+            try {
+                await liff.init({ liffId: "2008169596-jrk027rz", withLoginOnExternalBrowser: true });
+                if (liff.isLoggedIn()) {
+                    getUserProfile();
+                } else {
+                    liff.login();
+                }
+            } catch (err) {
+                alert("LIFF init failed: " + err.message);
             }
         }
 
